@@ -1,0 +1,52 @@
+[  5%] Building CXX object CMakeFiles/mini_db_engine.dir/src/bplus_tree.cpp.o
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:18:9: error: stray '\' in program
+   18 |     if (\!out) {
+      |         ^
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:27:9: error: stray '\' in program
+   27 |     if (\!in) {
+      |         ^
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:52:12: error: stray '\' in program
+   52 |     if (it \!= leaf.keys.end() && *it == key) {
+      |            ^
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:69:38: error: stray '\' in program
+   69 |     if (it == leaf.keys.end() || *it \!= key) {
+      |                                      ^
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:86:20: error: stray '\' in program
+   86 |     while (leaf_id \!= Node::invalid_id()) {
+      |                    ^
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:105:9: error: stray '\' in program
+  105 |     if (\!out) {
+      |         ^
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:140:9: error: stray '\' in program
+  140 |     if (\!filesystem::exists(path) || filesystem::is_empty(path)) {
+      |         ^
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:146:9: error: stray '\' in program
+  146 |     if (\!in) {
+      |         ^
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:152:9: error: stray '\' in program
+  152 |     if (\!in) {
+      |         ^
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:156:22: error: stray '\' in program
+  156 |         if (magic[i] \!= kMagic[i]) {
+      |                      ^
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:162:17: error: stray '\' in program
+  162 |     if (version \!= 1) {
+      |                 ^
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:175:46: error: stray '\' in program
+  175 |         node.is_leaf = read_pod<uint8_t>(in) \!= 0;
+      |                                              ^
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:230:12: error: stray '\' in program
+  230 |     while (\!nodes_[current_id].is_leaf) {
+      |            ^
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp: In member function 'void BPlusTree::insert_into_parent(uint64_t, int, uint64_t)':
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:256:25: error: no matching function for call to 'BPlusTree::find(std::vector<long long unsigned int>::iterator, std::vector<long long unsigned int>::iterator, uint64_t&)'
+  256 |     auto child_it = find(parent.children.begin(), parent.children.end(), left_id);
+      |                     ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:256:25: note: there is 1 candidate
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:65:35: note: candidate 1: 'std::optional<BPlusTree::ValuePointer> BPlusTree::find(int) const'
+   65 | optional<BPlusTree::ValuePointer> BPlusTree::find(int key) const {
+      |                                   ^~~~~~~~~
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:65:35: note: candidate expects 1 argument, 3 provided
+make[2]: *** [CMakeFiles/mini_db_engine.dir/src/bplus_tree.cpp.o] Error 1
+make[1]: *** [CMakeFiles/mini_db_engine.dir/all] Error 2
+make: *** [all] Error 2

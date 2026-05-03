@@ -1,0 +1,49 @@
+[ 50%] Built target mini_db_engine
+[ 55%] Building CXX object CMakeFiles/mini_db_engine_tests.dir/src/red_black_tree.cpp.o
+[ 60%] Building CXX object CMakeFiles/mini_db_engine_tests.dir/src/skip_list.cpp.o
+[ 65%] Building CXX object CMakeFiles/mini_db_engine_tests.dir/src/memory_layer.cpp.o
+[ 70%] Building CXX object CMakeFiles/mini_db_engine_tests.dir/src/bplus_tree.cpp.o
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:197:26: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+  197 |         nodes_.push_back(move(node));
+      |                          ^
+      |                          std::
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:286:21: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+  286 |     new_leaf.keys = move(right_keys);
+      |                     ^
+      |                     std::
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:287:23: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+  287 |     new_leaf.values = move(right_values);
+      |                       ^
+      |                       std::
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:311:21: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+  311 |     new_node.keys = move(right_keys);
+      |                     ^
+      |                     std::
+/Users/shahidpatel/cps/ds-cp/src/bplus_tree.cpp:312:25: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+  312 |     new_node.children = move(right_children);
+      |                         ^
+      |                         std::
+5 warnings generated.
+[ 75%] Building CXX object CMakeFiles/mini_db_engine_tests.dir/src/storage_layer.cpp.o
+/Users/shahidpatel/cps/ds-cp/src/storage_layer.cpp:9:19: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+    9 |     : index_path_(move(index_path)),
+      |                   ^
+      |                   std::
+/Users/shahidpatel/cps/ds-cp/src/storage_layer.cpp:10:20: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+   10 |       values_path_(move(values_path)),
+      |                    ^
+      |                    std::
+2 warnings generated.
+[ 80%] Building CXX object CMakeFiles/mini_db_engine_tests.dir/src/db_interface.cpp.o
+/Users/shahidpatel/cps/ds-cp/src/db_interface.cpp:8:22: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+    8 |     : storage_layer_(move(index_path), move(values_path)), shutdown_called_(false) {
+      |                      ^
+      |                      std::
+/Users/shahidpatel/cps/ds-cp/src/db_interface.cpp:8:40: warning: unqualified call to 'std::move' [-Wunqualified-std-cast-call]
+    8 |     : storage_layer_(move(index_path), move(values_path)), shutdown_called_(false) {
+      |                                        ^
+      |                                        std::
+2 warnings generated.
+[ 85%] Building CXX object CMakeFiles/mini_db_engine_tests.dir/src/command_parser.cpp.o
+[ 90%] Linking CXX executable mini_db_engine_tests
+[100%] Built target mini_db_engine_tests
