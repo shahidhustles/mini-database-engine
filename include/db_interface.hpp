@@ -3,6 +3,7 @@
 #include "huffman.hpp"
 #include "memory_layer.hpp"
 #include "storage_layer.hpp"
+#include "trace_models.hpp"
 
 #include <optional>
 #include <string>
@@ -19,6 +20,7 @@ public:
     std::vector<std::pair<int, std::string>> range(int start, int end);
     void flush();
     void shutdown();
+    OperationTrace execute_with_trace(const std::string& raw_command);
 
 private:
     HuffmanCodec codec_;

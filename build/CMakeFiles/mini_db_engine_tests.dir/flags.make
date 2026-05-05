@@ -4,9 +4,9 @@
 # compile CXX with /opt/homebrew/bin/aarch64-apple-darwin25-g++-15
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/Users/shahidpatel/cps/ds-cp/include
+CXX_INCLUDES = -I/Users/shahidpatel/cps/ds-cp/include -I/Users/shahidpatel/cps/ds-cp/third_party/include
 
-CXX_FLAGSarm64 = -std=c++17 -arch arm64
+CXX_FLAGSarm64 = -g -std=c++17 -arch arm64
 
-CXX_FLAGS = -std=c++17 -arch arm64
+CXX_FLAGS = -g -std=c++17 -arch arm64
 

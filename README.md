@@ -130,6 +130,7 @@ This produces:
 
 - `build/mini_db_engine`
 - `build/mini_db_engine_tests`
+- `build/mini_db_api`
 
 ## Run
 
@@ -138,6 +139,35 @@ Start the CLI:
 ```bash
 ./build/mini_db_engine
 ```
+
+### Browser workbench
+
+Start the local API server from the project root:
+
+```bash
+./build/mini_db_api 8080
+```
+
+In a second terminal:
+
+```bash
+cd web
+npm install
+npm run dev -- --host 127.0.0.1
+```
+
+Then open:
+
+```text
+http://127.0.0.1:5173/
+```
+
+The browser workbench uses its own persistence files by default:
+
+- `browser_index.db`
+- `browser_values.db`
+
+This keeps the visualization surface separate from any older CLI demo data already stored in `index.db` and `values.db`.
 
 Example session:
 
@@ -266,4 +296,3 @@ This is intentionally an MVP:
 If you need to explain the project in class, a clean summary is:
 
 > The database interface coordinates four data-structure components. New writes go to memory first, exact reads use a Red-Black Tree, ordered memory traversal uses a Skip List, durable storage uses a B+ Tree, and values are compressed with Huffman coding before storage.
-

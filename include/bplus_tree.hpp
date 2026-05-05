@@ -1,5 +1,7 @@
 #pragma once
 
+#include "trace_models.hpp"
+
 #include <cstdint>
 #include <optional>
 #include <string>
@@ -27,9 +29,18 @@ public:
     explicit BPlusTree(std::size_t max_keys = 4);
 
     void clear();
-    void upsert(int key, const ValuePointer& value);
+    void upsert(int key, const ValuePointer& value, std::vector<std::uint64_t>* touched_node_ids = nullptr);
     std::optional<ValuePointer> find(int key) const;
+    std::optional<ValuePointer> find_with_trace(int key,
+                                                std::vector<std::uint64_t>& node_path,
+                                                std::uint64_t& leaf_id) const;
     std::vector<std::pair<int, ValuePointer>> range(int start, int end) const;
+    std::vector<std::pair<int, ValuePointer>> range_with_trace(int start,
+                                                               int end,
+                                                               std::vector<std::uint64_t>& node_path,
+                                                               std::vector<std::uint64_t>& scanned_leaf_ids) const;
+    GraphSnapshot snapshot(const std::vector<std::uint64_t>& active_node_ids = {},
+                           const std::vector<int>& active_keys = {}) const;
 
     void save(const std::string& path) const;
     void load(const std::string& path);
@@ -45,7 +56,11 @@ private:
 
     std::uint64_t create_node(bool is_leaf);
     std::uint64_t find_leaf_id(int key) const;
-    void insert_into_parent(std::uint64_t left_id, int separator_key, std::uint64_t right_id);
-    void split_leaf(std::uint64_t leaf_id);
-    void split_internal(std::uint64_t node_id);
+    std::uint64_t find_leaf_id_with_trace(int key, std::vector<std::uint64_t>* node_path) const;
+    void insert_into_parent(std::uint64_t left_id,
+                            int separator_key,
+                            std::uint64_t right_id,
+                            std::vector<std::uint64_t>* touched_node_ids);
+    void split_leaf(std::uint64_t leaf_id, std::vector<std::uint64_t>* touched_node_ids);
+    void split_internal(std::uint64_t node_id, std::vector<std::uint64_t>* touched_node_ids);
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "compressed_value.hpp"
+#include "trace_models.hpp"
 
 #include <cstddef>
 #include <optional>
@@ -15,8 +16,14 @@ public:
 
     void upsert(int key, const CompressedValue& value);
     std::optional<CompressedValue> find(int key) const;
+    std::optional<CompressedValue> find_with_trace(int key, std::vector<int>& visited_keys) const;
     std::vector<std::pair<int, CompressedValue>> range(int start, int end) const;
+    std::vector<std::pair<int, CompressedValue>> range_with_trace(int start,
+                                                                  int end,
+                                                                  std::vector<int>& visited_keys,
+                                                                  std::vector<int>& included_keys) const;
     std::vector<std::pair<int, CompressedValue>> snapshot_sorted() const;
+    GraphSnapshot snapshot(const std::vector<int>& active_keys = {}) const;
     void clear();
     std::size_t size() const;
 

@@ -1,4 +1,5 @@
 /Users/shahidpatel/cps/ds-cp/build/CMakeFiles/mini_db_engine.dir
 /Users/shahidpatel/cps/ds-cp/build/CMakeFiles/mini_db_engine_tests.dir
+/Users/shahidpatel/cps/ds-cp/build/CMakeFiles/mini_db_api.dir
 /Users/shahidpatel/cps/ds-cp/build/CMakeFiles/edit_cache.dir
 /Users/shahidpatel/cps/ds-cp/build/CMakeFiles/rebuild_cache.dir

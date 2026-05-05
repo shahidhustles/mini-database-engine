@@ -4,7 +4,11 @@
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
+#include <queue>
+#include <sstream>
 #include <stdexcept>
+#include <unordered_map>
+#include <unordered_set>
 
 using namespace std;
 
@@ -28,6 +32,25 @@ T read_pod(istream& in) {
     return value;
 }
 
+namespace {
+
+string join_keys(const vector<int>& keys) {
+    ostringstream out;
+    for (size_t i = 0; i < keys.size(); ++i) {
+        if (i != 0) {
+            out << " | ";
+        }
+        out << keys[i];
+    }
+    return out.str();
+}
+
+bool contains_key(const vector<int>& haystack, int key) {
+    return find(haystack.begin(), haystack.end(), key) != haystack.end();
+}
+
+}  // namespace
+
 BPlusTree::BPlusTree(size_t max_keys) : max_keys_(max_keys), root_id_(0) {
     clear();
 }
@@ -38,12 +61,15 @@ void BPlusTree::clear() {
     root_id_ = 0;
 }
 
-void BPlusTree::upsert(int key, const ValuePointer& value) {
-    const auto leaf_id = find_leaf_id(key);
-    auto& leaf = nodes_[leaf_id];
+void BPlusTree::upsert(int key, const ValuePointer& value, vector<uint64_t>* touched_node_ids) {
+    const auto leaf_id = find_leaf_id_with_trace(key, touched_node_ids);
+    if (touched_node_ids != nullptr) {
+        touched_node_ids->push_back(leaf_id);
+    }
 
+    auto& leaf = nodes_[leaf_id];
     auto it = lower_bound(leaf.keys.begin(), leaf.keys.end(), key);
-    const auto index = distance(leaf.keys.begin(), it);
+    const auto index = static_cast<size_t>(distance(leaf.keys.begin(), it));
 
     if (it != leaf.keys.end() && *it == key) {
         leaf.values[index] = value;
@@ -51,26 +77,48 @@ void BPlusTree::upsert(int key, const ValuePointer& value) {
     }
 
     leaf.keys.insert(it, key);
-    leaf.values.insert(leaf.values.begin() + index, value);
+    leaf.values.insert(leaf.values.begin() + static_cast<ptrdiff_t>(index), value);
 
     if (leaf.keys.size() > max_keys_) {
-        split_leaf(leaf_id);
+        split_leaf(leaf_id, touched_node_ids);
     }
 }
 
 optional<BPlusTree::ValuePointer> BPlusTree::find(int key) const {
-    const auto leaf_id = find_leaf_id(key);
+    vector<uint64_t> ignored;
+    uint64_t leaf_id = Node::invalid_id();
+    return find_with_trace(key, ignored, leaf_id);
+}
+
+optional<BPlusTree::ValuePointer> BPlusTree::find_with_trace(int key,
+                                                             vector<uint64_t>& node_path,
+                                                             uint64_t& leaf_id) const {
+    node_path.clear();
+    leaf_id = find_leaf_id_with_trace(key, &node_path);
     const auto& leaf = nodes_[leaf_id];
     auto it = lower_bound(leaf.keys.begin(), leaf.keys.end(), key);
     if (it == leaf.keys.end() || *it != key) {
         return nullopt;
     }
-    const auto index = distance(leaf.keys.begin(), it);
+    const auto index = static_cast<size_t>(distance(leaf.keys.begin(), it));
     return leaf.values[index];
 }
 
 vector<pair<int, BPlusTree::ValuePointer>> BPlusTree::range(int start, int end) const {
+    vector<uint64_t> ignored_path;
+    vector<uint64_t> ignored_leaves;
+    return range_with_trace(start, end, ignored_path, ignored_leaves);
+}
+
+vector<pair<int, BPlusTree::ValuePointer>> BPlusTree::range_with_trace(
+    int start,
+    int end,
+    vector<uint64_t>& node_path,
+    vector<uint64_t>& scanned_leaf_ids) const {
     vector<pair<int, ValuePointer>> results;
+    node_path.clear();
+    scanned_leaf_ids.clear();
+
     if (start > end) {
         swap(start, end);
     }
@@ -78,8 +126,9 @@ vector<pair<int, BPlusTree::ValuePointer>> BPlusTree::range(int start, int end) 
         return results;
     }
 
-    uint64_t leaf_id = find_leaf_id(start);
+    uint64_t leaf_id = find_leaf_id_with_trace(start, &node_path);
     while (leaf_id != Node::invalid_id()) {
+        scanned_leaf_ids.push_back(leaf_id);
         const auto& leaf = nodes_[leaf_id];
         for (size_t i = 0; i < leaf.keys.size(); ++i) {
             const int key = leaf.keys[i];
@@ -94,6 +143,81 @@ vector<pair<int, BPlusTree::ValuePointer>> BPlusTree::range(int start, int end) 
         leaf_id = leaf.next_leaf;
     }
     return results;
+}
+
+GraphSnapshot BPlusTree::snapshot(const vector<uint64_t>& active_node_ids,
+                                  const vector<int>& active_keys) const {
+    GraphSnapshot snapshot;
+    snapshot.layout = "preset";
+    if (nodes_.empty()) {
+        return snapshot;
+    }
+
+    unordered_set<uint64_t> active_nodes(active_node_ids.begin(), active_node_ids.end());
+    unordered_map<uint64_t, int> depth_map;
+    unordered_map<int, int> order_per_depth;
+    queue<uint64_t> pending;
+    pending.push(root_id_);
+    depth_map[root_id_] = 0;
+
+    while (!pending.empty()) {
+        const auto node_id = pending.front();
+        pending.pop();
+        const auto& node = nodes_[node_id];
+        if (!node.is_leaf) {
+            for (auto child : node.children) {
+                depth_map[child] = depth_map[node_id] + 1;
+                pending.push(child);
+            }
+        }
+    }
+
+    for (size_t node_id = 0; node_id < nodes_.size(); ++node_id) {
+        const auto& node = nodes_[node_id];
+        const int depth = depth_map.count(node_id) != 0 ? depth_map[node_id] : 0;
+        const int order = order_per_depth[depth]++;
+
+        GraphNode graph_node;
+        graph_node.id = "bplus-" + to_string(node_id);
+        graph_node.label = node.keys.empty() ? "(empty)" : join_keys(node.keys);
+        graph_node.group = node.is_leaf ? "bplus-leaf" : "bplus-internal";
+        graph_node.x = order * 180.0;
+        graph_node.y = depth * 120.0;
+        graph_node.active = active_nodes.count(node_id) != 0;
+        graph_node.highlighted = any_of(node.keys.begin(),
+                                        node.keys.end(),
+                                        [&](int key) { return contains_key(active_keys, key); });
+        if (node.is_leaf && node.next_leaf != Node::invalid_id()) {
+            graph_node.note = "leaf";
+        }
+        snapshot.nodes.push_back(graph_node);
+    }
+
+    for (size_t node_id = 0; node_id < nodes_.size(); ++node_id) {
+        const auto& node = nodes_[node_id];
+        if (!node.is_leaf) {
+            for (auto child : node.children) {
+                GraphEdge edge;
+                edge.id = "bplus-edge-" + to_string(node_id) + "-" + to_string(child);
+                edge.source = "bplus-" + to_string(node_id);
+                edge.target = "bplus-" + to_string(child);
+                edge.highlighted = active_nodes.count(node_id) != 0 && active_nodes.count(child) != 0;
+                snapshot.edges.push_back(edge);
+            }
+        } else if (node.next_leaf != Node::invalid_id()) {
+            GraphEdge edge;
+            edge.id = "bplus-leaf-" + to_string(node_id) + "-next";
+            edge.source = "bplus-" + to_string(node_id);
+            edge.target = "bplus-" + to_string(node.next_leaf);
+            edge.label = "next";
+            edge.dashed = true;
+            edge.highlighted = active_nodes.count(node_id) != 0 &&
+                               active_nodes.count(node.next_leaf) != 0;
+            snapshot.edges.push_back(edge);
+        }
+    }
+
+    return snapshot;
 }
 
 void BPlusTree::save(const string& path) const {
@@ -222,8 +346,19 @@ uint64_t BPlusTree::create_node(bool is_leaf) {
 }
 
 uint64_t BPlusTree::find_leaf_id(int key) const {
+    return find_leaf_id_with_trace(key, nullptr);
+}
+
+uint64_t BPlusTree::find_leaf_id_with_trace(int key, vector<uint64_t>* node_path) const {
     uint64_t current_id = root_id_;
-    while (!nodes_[current_id].is_leaf) {
+    while (true) {
+        if (node_path != nullptr) {
+            node_path->push_back(current_id);
+        }
+        if (nodes_[current_id].is_leaf) {
+            return current_id;
+        }
+
         const auto& node = nodes_[current_id];
         size_t child_index = 0;
         while (child_index < node.keys.size() && key >= node.keys[child_index]) {
@@ -231,10 +366,12 @@ uint64_t BPlusTree::find_leaf_id(int key) const {
         }
         current_id = node.children[child_index];
     }
-    return current_id;
 }
 
-void BPlusTree::insert_into_parent(uint64_t left_id, int separator_key, uint64_t right_id) {
+void BPlusTree::insert_into_parent(uint64_t left_id,
+                                   int separator_key,
+                                   uint64_t right_id,
+                                   vector<uint64_t>* touched_node_ids) {
     const auto parent_id = nodes_[left_id].parent;
     if (parent_id == Node::invalid_id()) {
         const auto new_root_id = create_node(false);
@@ -245,6 +382,11 @@ void BPlusTree::insert_into_parent(uint64_t left_id, int separator_key, uint64_t
         nodes_[left_id].parent = new_root_id;
         nodes_[right_id].parent = new_root_id;
         root_id_ = new_root_id;
+        if (touched_node_ids != nullptr) {
+            touched_node_ids->push_back(new_root_id);
+            touched_node_ids->push_back(left_id);
+            touched_node_ids->push_back(right_id);
+        }
         return;
     }
 
@@ -256,28 +398,32 @@ void BPlusTree::insert_into_parent(uint64_t left_id, int separator_key, uint64_t
             break;
         }
     }
-    parent.keys.insert(parent.keys.begin() + child_index, separator_key);
-    parent.children.insert(parent.children.begin() + child_index + 1, right_id);
+    parent.keys.insert(parent.keys.begin() + static_cast<ptrdiff_t>(child_index), separator_key);
+    parent.children.insert(parent.children.begin() + static_cast<ptrdiff_t>(child_index + 1), right_id);
     nodes_[right_id].parent = parent_id;
+    if (touched_node_ids != nullptr) {
+        touched_node_ids->push_back(parent_id);
+        touched_node_ids->push_back(right_id);
+    }
 
     if (parent.keys.size() > max_keys_) {
-        split_internal(parent_id);
+        split_internal(parent_id, touched_node_ids);
     }
 }
 
-void BPlusTree::split_leaf(uint64_t leaf_id) {
+void BPlusTree::split_leaf(uint64_t leaf_id, vector<uint64_t>* touched_node_ids) {
     const size_t split_index = (nodes_[leaf_id].keys.size() + 1) / 2;
     const auto parent_id = nodes_[leaf_id].parent;
     const auto old_next_leaf = nodes_[leaf_id].next_leaf;
-    vector<int> right_keys(nodes_[leaf_id].keys.begin() + split_index,
-                                nodes_[leaf_id].keys.end());
+    vector<int> right_keys(nodes_[leaf_id].keys.begin() + static_cast<ptrdiff_t>(split_index),
+                           nodes_[leaf_id].keys.end());
     vector<ValuePointer> right_values(
-        nodes_[leaf_id].values.begin() + split_index, nodes_[leaf_id].values.end());
+        nodes_[leaf_id].values.begin() + static_cast<ptrdiff_t>(split_index), nodes_[leaf_id].values.end());
 
     const auto new_leaf_id = create_node(true);
     auto& leaf = nodes_[leaf_id];
-    leaf.keys.erase(leaf.keys.begin() + split_index, leaf.keys.end());
-    leaf.values.erase(leaf.values.begin() + split_index, leaf.values.end());
+    leaf.keys.erase(leaf.keys.begin() + static_cast<ptrdiff_t>(split_index), leaf.keys.end());
+    leaf.values.erase(leaf.values.begin() + static_cast<ptrdiff_t>(split_index), leaf.values.end());
     leaf.next_leaf = new_leaf_id;
 
     auto& new_leaf = nodes_[new_leaf_id];
@@ -286,24 +432,27 @@ void BPlusTree::split_leaf(uint64_t leaf_id) {
     new_leaf.keys = move(right_keys);
     new_leaf.values = move(right_values);
 
-    insert_into_parent(leaf_id, new_leaf.keys.front(), new_leaf_id);
+    if (touched_node_ids != nullptr) {
+        touched_node_ids->push_back(leaf_id);
+        touched_node_ids->push_back(new_leaf_id);
+    }
+    insert_into_parent(leaf_id, new_leaf.keys.front(), new_leaf_id, touched_node_ids);
 }
 
-void BPlusTree::split_internal(uint64_t node_id) {
+void BPlusTree::split_internal(uint64_t node_id, vector<uint64_t>* touched_node_ids) {
     const auto parent_id = nodes_[node_id].parent;
     const size_t middle_index = nodes_[node_id].keys.size() / 2;
     const int promoted_key = nodes_[node_id].keys[middle_index];
 
-    vector<int> right_keys(nodes_[node_id].keys.begin() + middle_index + 1,
-                                nodes_[node_id].keys.end());
-    vector<uint64_t> right_children(
-        nodes_[node_id].children.begin() + middle_index + 1,
-        nodes_[node_id].children.end());
+    vector<int> right_keys(nodes_[node_id].keys.begin() + static_cast<ptrdiff_t>(middle_index + 1),
+                           nodes_[node_id].keys.end());
+    vector<uint64_t> right_children(nodes_[node_id].children.begin() + static_cast<ptrdiff_t>(middle_index + 1),
+                                    nodes_[node_id].children.end());
 
     const auto new_node_id = create_node(false);
     auto& node = nodes_[node_id];
-    node.keys.erase(node.keys.begin() + middle_index, node.keys.end());
-    node.children.erase(node.children.begin() + middle_index + 1, node.children.end());
+    node.keys.erase(node.keys.begin() + static_cast<ptrdiff_t>(middle_index), node.keys.end());
+    node.children.erase(node.children.begin() + static_cast<ptrdiff_t>(middle_index + 1), node.children.end());
 
     auto& new_node = nodes_[new_node_id];
     new_node.is_leaf = false;
@@ -314,6 +463,13 @@ void BPlusTree::split_internal(uint64_t node_id) {
     for (auto child_id : new_node.children) {
         nodes_[child_id].parent = new_node_id;
     }
+    if (touched_node_ids != nullptr) {
+        touched_node_ids->push_back(node_id);
+        touched_node_ids->push_back(new_node_id);
+        for (auto child_id : new_node.children) {
+            touched_node_ids->push_back(child_id);
+        }
+    }
 
-    insert_into_parent(node_id, promoted_key, new_node_id);
+    insert_into_parent(node_id, promoted_key, new_node_id, touched_node_ids);
 }

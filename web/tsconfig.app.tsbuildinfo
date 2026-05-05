@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/commandcomposer.tsx","./src/components/graphpanel.tsx","./src/components/historypane.tsx","./src/components/tablepanel.tsx","./src/components/tracepanelrenderer.tsx","./src/lib/api.ts","./src/lib/types.ts"],"version":"5.8.3"}

@@ -1,5 +1,6 @@
 #include "red_black_tree.hpp"
 
+#include <algorithm>
 #include <stdexcept>
 
 RedBlackTree::Node::Node(int node_key, const CompressedValue& node_value)
@@ -52,6 +53,24 @@ std::optional<CompressedValue> RedBlackTree::find(int key) const {
     return node->value;
 }
 
+std::optional<CompressedValue> RedBlackTree::find_with_path(int key, std::vector<int>& path) const {
+    path.clear();
+    Node* node = find_node_with_path(key, &path);
+    if (node == nullptr) {
+        return std::nullopt;
+    }
+    return node->value;
+}
+
+GraphSnapshot RedBlackTree::snapshot(const std::vector<int>& active_keys,
+                                     std::optional<int> highlighted_key) const {
+    GraphSnapshot snapshot;
+    snapshot.layout = "preset";
+    double next_x = 0.0;
+    snapshot_subtree(root_, snapshot, active_keys, highlighted_key, 0, next_x);
+    return snapshot;
+}
+
 void RedBlackTree::clear() {
     clear_subtree(root_);
     root_ = nullptr;
@@ -63,8 +82,15 @@ std::size_t RedBlackTree::size() const {
 }
 
 RedBlackTree::Node* RedBlackTree::find_node(int key) const {
+    return find_node_with_path(key, nullptr);
+}
+
+RedBlackTree::Node* RedBlackTree::find_node_with_path(int key, std::vector<int>* path) const {
     Node* current = root_;
     while (current != nullptr) {
+        if (path != nullptr) {
+            path->push_back(current->key);
+        }
         if (key == current->key) {
             return current;
         }
@@ -188,4 +214,52 @@ void RedBlackTree::clear_subtree(Node* node) {
     clear_subtree(node->left);
     clear_subtree(node->right);
     delete node;
+}
+
+void RedBlackTree::snapshot_subtree(Node* node,
+                                    GraphSnapshot& snapshot,
+                                    const std::vector<int>& active_keys,
+                                    std::optional<int> highlighted_key,
+                                    int depth,
+                                    double& next_x) const {
+    if (node == nullptr) {
+        return;
+    }
+
+    snapshot_subtree(node->left, snapshot, active_keys, highlighted_key, depth + 1, next_x);
+
+    GraphNode graph_node;
+    graph_node.id = "rb-" + std::to_string(node->key);
+    graph_node.label = std::to_string(node->key) + (node->color == Color::Red ? " (R)" : " (B)");
+    graph_node.group = node->color == Color::Red ? "rb-red" : "rb-black";
+    graph_node.x = next_x * 120.0;
+    graph_node.y = depth * 96.0;
+    graph_node.highlighted = highlighted_key.has_value() && highlighted_key.value() == node->key;
+    graph_node.active =
+        std::find(active_keys.begin(), active_keys.end(), node->key) != active_keys.end();
+    snapshot.nodes.push_back(graph_node);
+
+    if (node->left != nullptr) {
+        GraphEdge edge;
+        edge.id = graph_node.id + "-L";
+        edge.source = graph_node.id;
+        edge.target = "rb-" + std::to_string(node->left->key);
+        edge.label = "L";
+        edge.highlighted = graph_node.active &&
+                           std::find(active_keys.begin(), active_keys.end(), node->left->key) != active_keys.end();
+        snapshot.edges.push_back(edge);
+    }
+    if (node->right != nullptr) {
+        GraphEdge edge;
+        edge.id = graph_node.id + "-R";
+        edge.source = graph_node.id;
+        edge.target = "rb-" + std::to_string(node->right->key);
+        edge.label = "R";
+        edge.highlighted = graph_node.active &&
+                           std::find(active_keys.begin(), active_keys.end(), node->right->key) != active_keys.end();
+        snapshot.edges.push_back(edge);
+    }
+
+    next_x += 1.0;
+    snapshot_subtree(node->right, snapshot, active_keys, highlighted_key, depth + 1, next_x);
 }

@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 include_directories(include)
+include_directories(third_party/include)
 
 set(COMMON_SOURCES
     src/huffman.cpp
@@ -25,5 +26,10 @@ add_executable(mini_db_engine
 
 add_executable(mini_db_engine_tests
     tests/test_main.cpp
+    ${COMMON_SOURCES}
+)
+
+add_executable(mini_db_api
+    src/api_server.cpp
     ${COMMON_SOURCES}
 )

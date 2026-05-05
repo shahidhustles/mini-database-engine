@@ -142,6 +142,43 @@ mini_db_engine_tests/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/build
 .PHONY : mini_db_engine_tests/fast
 
+#=============================================================================
+# Target rules for targets named mini_db_api
+
+# Build rule for target.
+mini_db_api: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 mini_db_api
+.PHONY : mini_db_api
+
+# fast build rule for target.
+mini_db_api/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/build
+.PHONY : mini_db_api/fast
+
+src/api_server.o: src/api_server.cpp.o
+.PHONY : src/api_server.o
+
+# target to build an object file
+src/api_server.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/api_server.cpp.o
+.PHONY : src/api_server.cpp.o
+
+src/api_server.i: src/api_server.cpp.i
+.PHONY : src/api_server.i
+
+# target to preprocess a source file
+src/api_server.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/api_server.cpp.i
+.PHONY : src/api_server.cpp.i
+
+src/api_server.s: src/api_server.cpp.s
+.PHONY : src/api_server.s
+
+# target to generate assembly for a file
+src/api_server.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/api_server.cpp.s
+.PHONY : src/api_server.cpp.s
+
 src/bplus_tree.o: src/bplus_tree.cpp.o
 .PHONY : src/bplus_tree.o
 
@@ -149,6 +186,7 @@ src/bplus_tree.o: src/bplus_tree.cpp.o
 src/bplus_tree.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/bplus_tree.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/bplus_tree.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/bplus_tree.cpp.o
 .PHONY : src/bplus_tree.cpp.o
 
 src/bplus_tree.i: src/bplus_tree.cpp.i
@@ -158,6 +196,7 @@ src/bplus_tree.i: src/bplus_tree.cpp.i
 src/bplus_tree.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/bplus_tree.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/bplus_tree.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/bplus_tree.cpp.i
 .PHONY : src/bplus_tree.cpp.i
 
 src/bplus_tree.s: src/bplus_tree.cpp.s
@@ -167,6 +206,7 @@ src/bplus_tree.s: src/bplus_tree.cpp.s
 src/bplus_tree.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/bplus_tree.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/bplus_tree.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/bplus_tree.cpp.s
 .PHONY : src/bplus_tree.cpp.s
 
 src/command_parser.o: src/command_parser.cpp.o
@@ -176,6 +216,7 @@ src/command_parser.o: src/command_parser.cpp.o
 src/command_parser.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/command_parser.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/command_parser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/command_parser.cpp.o
 .PHONY : src/command_parser.cpp.o
 
 src/command_parser.i: src/command_parser.cpp.i
@@ -185,6 +226,7 @@ src/command_parser.i: src/command_parser.cpp.i
 src/command_parser.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/command_parser.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/command_parser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/command_parser.cpp.i
 .PHONY : src/command_parser.cpp.i
 
 src/command_parser.s: src/command_parser.cpp.s
@@ -194,6 +236,7 @@ src/command_parser.s: src/command_parser.cpp.s
 src/command_parser.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/command_parser.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/command_parser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/command_parser.cpp.s
 .PHONY : src/command_parser.cpp.s
 
 src/db_interface.o: src/db_interface.cpp.o
@@ -203,6 +246,7 @@ src/db_interface.o: src/db_interface.cpp.o
 src/db_interface.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/db_interface.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/db_interface.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/db_interface.cpp.o
 .PHONY : src/db_interface.cpp.o
 
 src/db_interface.i: src/db_interface.cpp.i
@@ -212,6 +256,7 @@ src/db_interface.i: src/db_interface.cpp.i
 src/db_interface.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/db_interface.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/db_interface.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/db_interface.cpp.i
 .PHONY : src/db_interface.cpp.i
 
 src/db_interface.s: src/db_interface.cpp.s
@@ -221,6 +266,7 @@ src/db_interface.s: src/db_interface.cpp.s
 src/db_interface.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/db_interface.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/db_interface.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/db_interface.cpp.s
 .PHONY : src/db_interface.cpp.s
 
 src/huffman.o: src/huffman.cpp.o
@@ -230,6 +276,7 @@ src/huffman.o: src/huffman.cpp.o
 src/huffman.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/huffman.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/huffman.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/huffman.cpp.o
 .PHONY : src/huffman.cpp.o
 
 src/huffman.i: src/huffman.cpp.i
@@ -239,6 +286,7 @@ src/huffman.i: src/huffman.cpp.i
 src/huffman.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/huffman.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/huffman.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/huffman.cpp.i
 .PHONY : src/huffman.cpp.i
 
 src/huffman.s: src/huffman.cpp.s
@@ -248,6 +296,7 @@ src/huffman.s: src/huffman.cpp.s
 src/huffman.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/huffman.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/huffman.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/huffman.cpp.s
 .PHONY : src/huffman.cpp.s
 
 src/main.o: src/main.cpp.o
@@ -281,6 +330,7 @@ src/memory_layer.o: src/memory_layer.cpp.o
 src/memory_layer.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/memory_layer.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/memory_layer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/memory_layer.cpp.o
 .PHONY : src/memory_layer.cpp.o
 
 src/memory_layer.i: src/memory_layer.cpp.i
@@ -290,6 +340,7 @@ src/memory_layer.i: src/memory_layer.cpp.i
 src/memory_layer.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/memory_layer.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/memory_layer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/memory_layer.cpp.i
 .PHONY : src/memory_layer.cpp.i
 
 src/memory_layer.s: src/memory_layer.cpp.s
@@ -299,6 +350,7 @@ src/memory_layer.s: src/memory_layer.cpp.s
 src/memory_layer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/memory_layer.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/memory_layer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/memory_layer.cpp.s
 .PHONY : src/memory_layer.cpp.s
 
 src/red_black_tree.o: src/red_black_tree.cpp.o
@@ -308,6 +360,7 @@ src/red_black_tree.o: src/red_black_tree.cpp.o
 src/red_black_tree.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/red_black_tree.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/red_black_tree.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/red_black_tree.cpp.o
 .PHONY : src/red_black_tree.cpp.o
 
 src/red_black_tree.i: src/red_black_tree.cpp.i
@@ -317,6 +370,7 @@ src/red_black_tree.i: src/red_black_tree.cpp.i
 src/red_black_tree.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/red_black_tree.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/red_black_tree.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/red_black_tree.cpp.i
 .PHONY : src/red_black_tree.cpp.i
 
 src/red_black_tree.s: src/red_black_tree.cpp.s
@@ -326,6 +380,7 @@ src/red_black_tree.s: src/red_black_tree.cpp.s
 src/red_black_tree.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/red_black_tree.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/red_black_tree.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/red_black_tree.cpp.s
 .PHONY : src/red_black_tree.cpp.s
 
 src/skip_list.o: src/skip_list.cpp.o
@@ -335,6 +390,7 @@ src/skip_list.o: src/skip_list.cpp.o
 src/skip_list.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/skip_list.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/skip_list.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/skip_list.cpp.o
 .PHONY : src/skip_list.cpp.o
 
 src/skip_list.i: src/skip_list.cpp.i
@@ -344,6 +400,7 @@ src/skip_list.i: src/skip_list.cpp.i
 src/skip_list.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/skip_list.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/skip_list.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/skip_list.cpp.i
 .PHONY : src/skip_list.cpp.i
 
 src/skip_list.s: src/skip_list.cpp.s
@@ -353,6 +410,7 @@ src/skip_list.s: src/skip_list.cpp.s
 src/skip_list.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/skip_list.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/skip_list.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/skip_list.cpp.s
 .PHONY : src/skip_list.cpp.s
 
 src/storage_layer.o: src/storage_layer.cpp.o
@@ -362,6 +420,7 @@ src/storage_layer.o: src/storage_layer.cpp.o
 src/storage_layer.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/storage_layer.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/storage_layer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/storage_layer.cpp.o
 .PHONY : src/storage_layer.cpp.o
 
 src/storage_layer.i: src/storage_layer.cpp.i
@@ -371,6 +430,7 @@ src/storage_layer.i: src/storage_layer.cpp.i
 src/storage_layer.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/storage_layer.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/storage_layer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/storage_layer.cpp.i
 .PHONY : src/storage_layer.cpp.i
 
 src/storage_layer.s: src/storage_layer.cpp.s
@@ -380,6 +440,7 @@ src/storage_layer.s: src/storage_layer.cpp.s
 src/storage_layer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine.dir/build.make CMakeFiles/mini_db_engine.dir/src/storage_layer.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_engine_tests.dir/build.make CMakeFiles/mini_db_engine_tests.dir/src/storage_layer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_db_api.dir/build.make CMakeFiles/mini_db_api.dir/src/storage_layer.cpp.s
 .PHONY : src/storage_layer.cpp.s
 
 tests/test_main.o: tests/test_main.cpp.o
@@ -414,8 +475,12 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... mini_db_api"
 	@echo "... mini_db_engine"
 	@echo "... mini_db_engine_tests"
+	@echo "... src/api_server.o"
+	@echo "... src/api_server.i"
+	@echo "... src/api_server.s"
 	@echo "... src/bplus_tree.o"
 	@echo "... src/bplus_tree.i"
 	@echo "... src/bplus_tree.s"

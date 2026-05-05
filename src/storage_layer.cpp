@@ -50,12 +50,38 @@ void StorageLayer::upsert(int key, const CompressedValue& value) {
     tree_.save(index_path_);
 }
 
+vector<uint64_t> StorageLayer::upsert_with_trace(int key, const CompressedValue& value) {
+    if (!is_open_) {
+        throw runtime_error("Storage layer is not open.");
+    }
+
+    const auto pointer = append_value(value);
+    vector<uint64_t> touched_nodes;
+    tree_.upsert(key, pointer, &touched_nodes);
+    tree_.save(index_path_);
+    return touched_nodes;
+}
+
 optional<CompressedValue> StorageLayer::find(int key) {
     if (!is_open_) {
         throw runtime_error("Storage layer is not open.");
     }
 
     const auto pointer = tree_.find(key);
+    if (!pointer.has_value()) {
+        return nullopt;
+    }
+    return read_value(pointer.value());
+}
+
+optional<CompressedValue> StorageLayer::find_with_trace(int key,
+                                                        vector<uint64_t>& node_path,
+                                                        uint64_t& leaf_id) {
+    if (!is_open_) {
+        throw runtime_error("Storage layer is not open.");
+    }
+
+    const auto pointer = tree_.find_with_trace(key, node_path, leaf_id);
     if (!pointer.has_value()) {
         return nullopt;
     }
@@ -72,6 +98,26 @@ vector<pair<int, CompressedValue>> StorageLayer::range(int start, int end) {
         results.push_back(make_pair(item.first, read_value(item.second)));
     }
     return results;
+}
+
+vector<pair<int, CompressedValue>> StorageLayer::range_with_trace(int start,
+                                                                  int end,
+                                                                  vector<uint64_t>& node_path,
+                                                                  vector<uint64_t>& scanned_leaf_ids) {
+    if (!is_open_) {
+        throw runtime_error("Storage layer is not open.");
+    }
+
+    vector<pair<int, CompressedValue>> results;
+    for (const auto& item : tree_.range_with_trace(start, end, node_path, scanned_leaf_ids)) {
+        results.push_back(make_pair(item.first, read_value(item.second)));
+    }
+    return results;
+}
+
+GraphSnapshot StorageLayer::tree_snapshot(const vector<uint64_t>& active_node_ids,
+                                          const vector<int>& active_keys) const {
+    return tree_.snapshot(active_node_ids, active_keys);
 }
 
 void StorageLayer::close() {
